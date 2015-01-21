@@ -35,10 +35,10 @@ func NewDownloader(torrentPath string, downloadPath string) (downloader *Downloa
 func (d *Downloader) StartDownload() (err error) {
 	for _, tracker := range d.Torrent.Trackers() {
 		trackerRequest := tracker.Request(d.Torrent.InfoHash(), PeerID, Port)
-		networking.SendTrackerRequest(trackerRequest)
+		tErr := networking.SendConnectRequest(trackerRequest)
+		if tErr != nil {
+			fmt.Println(tErr)
+		}
 	}
-
-	fmt.Println("\nThe End")
-
 	return
 }
