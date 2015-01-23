@@ -31,6 +31,9 @@ func NewTracker(url *url.URL) *Tracker {
 	}
 }
 
+func (t *Tracker) GetPeers() []*Peer {
+}
+
 func (t *Tracker) Request(infoHash string, peerID string, port int) *TrackerRequest {
 	return &TrackerRequest{
 		Tracker:    t,
