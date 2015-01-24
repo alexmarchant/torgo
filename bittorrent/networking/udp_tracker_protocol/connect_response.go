@@ -11,7 +11,7 @@ type ConnectResponse struct {
 	ConnectionID  uint64
 }
 
-func ParseConnectResponse(data []byte, request *ConnectRequest) (response *ConnectResponse, err error) {
+func NewConnectResponse(data []byte, request *ConnectRequest) (response *ConnectResponse, err error) {
 	if len(data) < 16 {
 		err = errors.New("Response too short")
 		return

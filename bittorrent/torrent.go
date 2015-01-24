@@ -2,6 +2,7 @@ package bittorrent
 
 import (
 	"crypto/sha1"
+	// "fmt"
 	"github.com/zeebo/bencode"
 	"io"
 	"net/url"
@@ -63,19 +64,8 @@ func (t *Torrent) Trackers() []*Tracker {
 
 	for _, trackerAnnounce := range t.AnnounceList {
 		trackerURL, _ = url.Parse(trackerAnnounce[0])
-		trackers = append(trackers, NewTracker(trackerURL))
-	}
-
-	return trackers
-}
-
-func (t *Torrent) HTTPTrackers() []*Tracker {
-	trackers := []*Tracker{}
-
-	for _, tracker := range t.Trackers() {
-		if tracker.URL.Scheme == "http" {
-			trackers = append(trackers, tracker)
-		}
+		newTracker := NewTracker(trackerURL)
+		trackers = append(trackers, newTracker)
 	}
 
 	return trackers

@@ -13,9 +13,9 @@ const (
 )
 
 type Peer struct {
-	Ip           string
+	IPAddress    uint32
 	PeerId       string
-	Port         int
+	TCPPort      uint16
 	State        peerState
 	AmChoking    bool
 	AmInterested bool
@@ -23,8 +23,10 @@ type Peer struct {
 	Interested   bool
 }
 
-func NewPeer() *Peer {
+func NewPeer(ipAddress uint32, port uint16) *Peer {
 	return &Peer{
+		IPAddress:    ipAddress,
+		TCPPort:      port,
 		State:        peerNotConnected,
 		AmChoking:    true,
 		AmInterested: false,
