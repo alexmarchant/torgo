@@ -37,8 +37,6 @@ func Execute() error {
 	switch cmd.Name {
 	case "download":
 		return Download(cmd)
-	case "status":
-		return Status(cmd)
 	}
 
 	return BadCommand
