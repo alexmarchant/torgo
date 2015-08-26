@@ -3,9 +3,10 @@ package downloader
 import (
 	"fmt"
 	"github.com/alexmarchant/torgo/bittorrent"
+	"reflect"
 )
 
-var (
+const (
 	Port   = 6881
 	PeerID = "15620985492012023883"
 )
@@ -35,15 +36,23 @@ func NewDownloader(torrentPath string, downloadPath string) (downloader *Downloa
 
 func (d *Downloader) StartDownload() error {
 	err := d.getPeers()
+	if err != nil {
+		return err
+	}
+
 	fmt.Println(len(d.Peers), "peers found.")
-	return err
+
+	if len(d.Peers) > 0 {
+		err = d.downloadFromPeer(d.Peers[0])
+	}
+
+	return nil
 }
 
 func (d *Downloader) getPeers() error {
 	for _, tracker := range d.Torrent.Trackers() {
 		peers, err := tracker.GetPeersForTorrent(d.Torrent)
 		if err != nil {
-			fmt.Println("Error getting peers:", err, "... moving to the next tracker")
 			continue
 		}
 		d.addPeers(peers)
@@ -62,9 +71,13 @@ func (d *Downloader) addPeers(newPeers []*bittorrent.Peer) {
 
 func contains(peers []*bittorrent.Peer, newPeer *bittorrent.Peer) bool {
 	for _, peer := range peers {
-		if peer.IPAddress == newPeer.IPAddress && peer.TCPPort == newPeer.TCPPort {
+		if reflect.DeepEqual(peer.IPAddress, newPeer.IPAddress) && peer.TCPPort == newPeer.TCPPort {
 			return true
 		}
 	}
 	return false
+}
+
+func (d *Downloader) downloadFromPeer(peer *bittorrent.Peer) error {
+	return nil
 }

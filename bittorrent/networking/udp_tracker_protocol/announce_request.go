@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"math/rand"
 	"net"
 	"net/url"
@@ -51,8 +50,8 @@ func (ar *AnnounceRequest) Message() []byte {
 	binary.Write(buf, binary.BigEndian, ar.ConnectionID)
 	binary.Write(buf, binary.BigEndian, ar.Action)
 	binary.Write(buf, binary.BigEndian, ar.TransactionID)
-	binary.Write(buf, binary.BigEndian, ar.InfoHash)
-	binary.Write(buf, binary.BigEndian, ar.PeerID)
+	binary.Write(buf, binary.BigEndian, []byte(ar.InfoHash))
+	binary.Write(buf, binary.BigEndian, []byte(ar.PeerID))
 	binary.Write(buf, binary.BigEndian, ar.Downloaded)
 	binary.Write(buf, binary.BigEndian, ar.Left)
 	binary.Write(buf, binary.BigEndian, ar.Uploaded)
@@ -61,8 +60,6 @@ func (ar *AnnounceRequest) Message() []byte {
 	binary.Write(buf, binary.BigEndian, ar.Key)
 	binary.Write(buf, binary.BigEndian, ar.NumWant)
 	binary.Write(buf, binary.BigEndian, ar.Port)
-
-	fmt.Println("Announce request:", buf.Bytes())
 
 	return buf.Bytes()
 }
@@ -88,8 +85,8 @@ func (ar *AnnounceRequest) writeRequest(conn net.Conn) {
 
 func (ar *AnnounceRequest) readResponse(conn net.Conn) (response *AnnounceResponse, err error) {
 	buf := make([]byte, 2048)
-	readDeadline := time.Now().Add(timeout)
 
+	readDeadline := time.Now().Add(timeout)
 	conn.SetReadDeadline(readDeadline)
 
 	_, err = bufio.NewReader(conn).Read(buf)

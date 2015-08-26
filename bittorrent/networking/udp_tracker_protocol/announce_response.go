@@ -3,6 +3,7 @@ package udp_tracker_protocol
 import (
 	"encoding/binary"
 	"errors"
+	"net"
 )
 
 type AnnounceResponse struct {
@@ -67,7 +68,7 @@ func NewAnnounceResponse(data []byte, request *AnnounceRequest) (response *Annou
 }
 
 type PeerAddress struct {
-	IPAddress uint32
+	IPAddress net.IP
 	TCPPort   uint16
 }
 
@@ -77,10 +78,10 @@ func NewPeerAddress(data []byte) (peerAddress *PeerAddress, err error) {
 		return
 	}
 
-	ipAddress := binary.BigEndian.Uint32(data[0:4])
+	ipAddress := net.IP(data[0:4])
 	tcpPort := binary.BigEndian.Uint16(data[4:6])
 
-	if ipAddress == 0 || tcpPort == 0 {
+	if ipAddress.String() == "0.0.0.0" || tcpPort == 0 {
 		err = errors.New("Bad peer address data")
 		return
 	}

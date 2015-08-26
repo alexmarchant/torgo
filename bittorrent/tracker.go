@@ -2,7 +2,6 @@ package bittorrent
 
 import (
 	"errors"
-	"fmt"
 	"github.com/alexmarchant/torgo/bittorrent/networking/udp_tracker_protocol"
 	"net/url"
 )
@@ -42,13 +41,11 @@ func (t *Tracker) GetPeersForTorrentUDP(torrent *Torrent) (peers []*Peer, err er
 	if err != nil {
 		return
 	}
-	fmt.Printf("Tracker connected: %+v\n", connectResponse)
 
 	announceResponse, err = udp_tracker_protocol.NewAnnounceRequest(connectResponse, "asdfasdfasdfasdfasdf", torrent.InfoHash(), 8888).Send(t.URL)
 	if err != nil {
 		return
 	}
-	fmt.Printf("Tracker announce responsed: %+v\n", announceResponse)
 
 	peers = []*Peer{}
 

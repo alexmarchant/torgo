@@ -2,7 +2,6 @@ package bittorrent
 
 import (
 	"crypto/sha1"
-	// "fmt"
 	"github.com/zeebo/bencode"
 	"io"
 	"net/url"
@@ -20,23 +19,29 @@ type Torrent struct {
 }
 
 type InfoDict struct {
-	Name        string `bencode:"name"`
-	Length      int    `bencode:"length"`
-	PieceLength int    `bencode:"piece length"`
-	Pieces      string `bencode:"pieces"`
+	Name        string            `bencode:"name"`
+	Length      int               `bencode:"length"`
+	PieceLength int               `bencode:"piece length"`
+	Pieces      string            `bencode:"pieces"`
+	Files       []TorrentInfoFile `bencode:"files",omitempty:"`
+}
+
+type TorrentInfoFile struct {
+	Name   string   `bencode:"name"`
+	Length int      `bencode:"length"`
+	Md5Sum string   `bencode:"md5sum"`
+	Path   []string `bencode:"path"`
 }
 
 func NewTorrent(torrentPath string) (torrent *Torrent, err error) {
 	var file *os.File
 
 	file, err = os.Open(torrentPath)
-
 	if err != nil {
 		return
 	}
 
 	err = bencode.NewDecoder(file).Decode(&torrent)
-
 	if err != nil {
 		panic(err)
 	}
@@ -46,14 +51,15 @@ func NewTorrent(torrentPath string) (torrent *Torrent, err error) {
 
 func (t *Torrent) InfoHash() string {
 	str, err := bencode.EncodeString(&t.Info)
-
 	if err != nil {
 		panic(err)
 	}
 
 	h := sha1.New()
 	io.WriteString(h, str)
-	return string(h.Sum(nil))
+	infoHash := h.Sum(nil)
+
+	return string(infoHash)
 }
 
 func (t *Torrent) Trackers() []*Tracker {
