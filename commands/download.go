@@ -14,12 +14,16 @@ func Download(cmd *Command) error {
 	downloadPath := downloadPath(cmd)
 
 	myDownloader, err := downloader.NewDownloader(torrentPath, downloadPath)
-
 	if err != nil {
 		return err
 	}
 
-	return myDownloader.StartDownload()
+	err = myDownloader.StartDownload()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func downloadPath(cmd *Command) string {

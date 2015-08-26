@@ -44,6 +44,9 @@ func (d *Downloader) StartDownload() error {
 
 	if len(d.Peers) > 0 {
 		err = d.downloadFromPeer(d.Peers[0])
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -51,7 +54,7 @@ func (d *Downloader) StartDownload() error {
 
 func (d *Downloader) getPeers() error {
 	for _, tracker := range d.Torrent.Trackers() {
-		peers, err := tracker.GetPeersForTorrent(d.Torrent)
+		peers, err := tracker.GetPeersForTorrent(d.Torrent, PeerID)
 		if err != nil {
 			continue
 		}
